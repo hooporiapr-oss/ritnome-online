@@ -68,7 +68,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   display:grid;grid-template-columns:88px 88px 88px;grid-template-rows:76px 76px 76px;gap:8px;
 }
 .choice-btn{border:3px solid rgba(124,58,237,.5);background:rgba(124,58,237,.08);border-radius:16px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .08s}
-.choice-btn .arrow-glyph{font-size:1.9rem;line-height:1}
+.choice-btn .arrow-glyph{font-size:1.9rem;line-height:1;display:inline-block}
 .choice-btn:active{background:rgba(124,58,237,.35);transform:scale(.94)}
 #slot0{grid-column:2;grid-row:1}
 #slot1{grid-column:1;grid-row:2}
@@ -203,7 +203,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   </div>
   <div class="vrr-logo">FLASH <span>REACTION</span></div>
   <div class="vrr-sub" data-i18n="subtitle">Reaction Velocity · Flash &amp; Recall</div>
-  <div class="rule-t" data-i18n="rules"><b>60 seconds.</b> A target flashes once, at a new spot each time, carrying an arrow. Then it's gone — read it, remember it, and tap the matching direction whenever you're ready. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?</div>
+  <div class="rule-t" data-i18n="rules"><b>60 seconds.</b> A target flashes once, at a new spot each time, carrying an arrow — pulled from all eight possible directions, four of them shown on your buttons each round. Then it's gone — read it, remember it, and tap the matching direction whenever you're ready. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?</div>
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="openNameEntry()">▶ START</button>
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
@@ -303,7 +303,7 @@ var INTRO_I18N={
   en:{
     fullscreen:'⛶ Fullscreen',
     subtitle:'Reaction Velocity · Flash & Recall',
-    rules:'<b>60 seconds.</b> A target flashes once, at a new spot each time, carrying an arrow. Then it\'s gone — read it, remember it, and tap the matching direction whenever you\'re ready. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
+    rules:'<b>60 seconds.</b> A target flashes once, at a new spot each time, carrying an arrow — pulled from all eight possible directions, four of them shown on your buttons each round. Then it\'s gone — read it, remember it, and tap the matching direction whenever you\'re ready. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
     start:'▶ START',
     standingsBtn:'🏆 THE STANDINGS',
     yourBest:'Your best: <b>{n} pts</b>'
@@ -311,7 +311,7 @@ var INTRO_I18N={
   es:{
     fullscreen:'⛶ Pantalla Completa',
     subtitle:'Velocidad de Reacción · Destello y Recuerda',
-    rules:'<b>60 segundos.</b> Un objetivo destella una vez, en un lugar nuevo cada vez, mostrando una flecha. Luego desaparece — léela, recuérdala, y toca la dirección correcta cuando estés listo. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Una dirección equivocada o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
+    rules:'<b>60 segundos.</b> Un objetivo destella una vez, en un lugar nuevo cada vez, mostrando una flecha — tomada de las ocho direcciones posibles, cuatro de ellas en tus botones cada ronda. Luego desaparece — léela, recuérdala, y toca la dirección correcta cuando estés listo. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Una dirección equivocada o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
     start:'▶ EMPEZAR',
     standingsBtn:'🏆 LA CLASIFICACIÓN',
     yourBest:'Tu mejor: <b>{n} pts</b>'
@@ -597,21 +597,42 @@ function randomStagePos(){
 //  no second direction array. currentSide can only ever be one of
 //  these four string values, and ARROWS only has these four keys.
 // ══════════════════════════════════════════════════════
-var ARROWS={left:'◀',right:'▶',up:'▲',down:'▼'};
-var DIRS=['left','right','up','down'];
+// Same filled-triangle glyph The Full Compass already proved works —
+// each direction is just that one shape, rotated. The direction pool
+// itself is now the full 8-direction compass, but only four are drawn
+// for each round — the response format stays exactly four buttons,
+// same as always, just with a genuinely wider pool to draw the round
+// from. Which four (and which one becomes the actual target) is
+// re-picked fresh every single round.
+var ROTATIONS={up:0,'up-right':45,right:90,'down-right':135,down:180,'down-left':225,left:270,'up-left':315};
+var ALL_DIRS=['up','up-right','right','down-right','down','down-left','left','up-left'];
 var noResponseTimer=null;
+
+// Picks 4 unique directions out of the full 8-direction pool for this
+// round — a diagonal landing among mostly-familiar reads is exactly
+// the kind of moment that forces a real, careful look rather than a
+// reflexive muscle-memory tap.
+function genRoundDirs(){
+  var shuffled=ALL_DIRS.slice();
+  for(var i=shuffled.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=tmp;
+  }
+  return shuffled.slice(0,4);
+}
 
 function nextTrial(){
   if(phase!=='running')return;
-  currentSide=DIRS[Math.floor(Math.random()*DIRS.length)];
-  stimulus.textContent=ARROWS[currentSide];
+  var roundDirs=genRoundDirs();
+  currentSide=roundDirs[Math.floor(Math.random()*4)];
+  stimulus.innerHTML='<span class="dir-glyph" style="display:inline-block;transform:rotate('+ROTATIONS[currentSide]+'deg)">▲</span>';
   var pos=randomStagePos();
   stimulus.style.left=pos.x+'px';
   stimulus.style.top=pos.y+'px';
   stimulus.classList.add('visible');
   shownAt=performance.now();
   awaitingResponse=true;
-  shuffleButtonLayout();
+  shuffleButtonLayout(roundDirs);
 
   timers.push(setTimeout(function(){
     stimulus.classList.remove('visible');
@@ -622,9 +643,13 @@ function nextTrial(){
 }
 function stopNoResponseTimer(){if(noResponseTimer){clearTimeout(noResponseTimer);noResponseTimer=null}}
 
+// Places this round's 4 chosen directions into the four fixed screen
+// positions in a fresh random order every time. The physical slots
+// never move, but which arrow is IN each slot — and which 4 of the 8
+// possible arrows even got chosen — changes every round.
 var SLOT_IDS=['slot0','slot1','slot2','slot3'];
-function shuffleButtonLayout(){
-  var shuffled=DIRS.slice();
+function shuffleButtonLayout(roundDirs){
+  var shuffled=roundDirs.slice();
   for(var i=shuffled.length-1;i>0;i--){
     var j=Math.floor(Math.random()*(i+1));
     var tmp=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=tmp;
@@ -633,7 +658,9 @@ function shuffleButtonLayout(){
     var dir=shuffled[i];
     var btn=$(slotId);
     btn.dataset.dir=dir;
-    btn.querySelector('.arrow-glyph').textContent=ARROWS[dir];
+    var glyph=btn.querySelector('.arrow-glyph');
+    glyph.textContent='▲';
+    glyph.style.transform='rotate('+ROTATIONS[dir]+'deg)';
   });
 }
 
