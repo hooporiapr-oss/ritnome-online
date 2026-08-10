@@ -128,21 +128,28 @@ body{
   letter-spacing:.01em;
 }
 
-/* Flash Reaction sits on its own, centered, ahead of the memory-game
-   grid below. */
+/* The two flash-reaction drills sit together here, ahead of the
+   memory-game grid below — Flash Reaction and Moving Target are both
+   pure reaction speed, distinct from the Recall/Reflex/Replay/
+   Recognition memory games underneath, so they're grouped together
+   as their own featured pair. */
 .featuredRow{
-  display:flex;
-  justify-content:center;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
   margin-bottom:14px;
 }
 .gameLink.featured{
   width:100%;
-  max-width:420px;
   text-align:center;
   background:linear-gradient(135deg,rgba(155,89,182,.16),rgba(255,255,255,.04));
   border-color:rgba(201,160,224,.55);
 }
 .gameLink.featured .tag{text-align:center}
+
+@media (max-width:520px){
+  .featuredRow{grid-template-columns:1fr}
+}
 
 .gameGrid{
   display:grid;
@@ -205,6 +212,10 @@ footer{
       <a class="gameLink featured" href="velo-flash-reaction.html">
         Flash Reaction
         <span class="tag">One flash, then blank — read it, remember it, react. 60 seconds, real speed scoring</span>
+      </a>
+      <a class="gameLink featured" href="velo-moving-target.html">
+        Moving Target
+        <span class="tag">The target never sits still — read past the motion to the true direction</span>
       </a>
     </div>
 
