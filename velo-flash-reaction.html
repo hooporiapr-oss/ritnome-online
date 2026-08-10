@@ -115,13 +115,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 .box-title{font-size:1.7rem;font-weight:900;font-style:italic;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 0 40px rgba(255,140,0,.8);margin-bottom:2px}
 .box-title span{color:#00e5ff}
 .box-sub{font-size:.65rem;letter-spacing:.24em;text-transform:uppercase;color:#7c3aed;margin-bottom:22px}
-/* Landscape layout — a wide, two-column grid rather than one long
-   narrow strip stacking straight down. In VR especially, a page that
-   spreads sideways within the comfortable field of view beats one
-   that demands scrolling far down to reach everything. Last Game
-   (which can grow tall on its own, since its tap log covers a full
-   game) gets its own column; Career and Recent Games — both more
-   compact and predictable in height — share the other. */
 .box-grid{width:100%;max-width:1000px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
 .box-section{width:100%;margin-bottom:24px}
 .box-section-label{font-size:.65rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#ffd35a;margin-bottom:8px;text-align:left;padding-left:4px}
@@ -137,15 +130,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 .box-recent-row{font-size:.75rem;color:#9fb3c8;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;padding:8px 10px;cursor:pointer}
 .box-recent-row:hover{background:rgba(124,58,237,.08)}
 .box-recent-row .expand-hint{color:#7c3aed;font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;margin-left:8px}
-/* Tap-by-tap — the full, ordered history of a single game, not just
-   its summary numbers. A real reference point for how the total
-   points actually built up, hit by hit. */
-/* A real timeline, not a wrapped grid — each tap recedes a little
-   further into the distance than the one before it, curving gently
-   up and away, shrinking and fading as it goes. The same depth
-   language as the two-column layout, applied to a single game's own
-   sequence of taps, so a full game reads as a path you look down
-   rather than a spreadsheet row. */
 .tap-log{display:flex;flex-wrap:wrap;gap:4px;padding:10px;background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.25);border-radius:12px;margin-top:8px}
 .tap-chip{flex:0 0 auto;min-width:44px;padding:4px 6px;border-radius:7px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:.62rem;font-weight:900;line-height:1.3}
 .tap-chip.hit{background:rgba(124,58,237,.22);border:1px solid rgba(124,58,237,.5);color:#c4b5fd}
@@ -253,10 +237,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
         <div class="box-table" id="standingsList" style="border-radius:12px"></div>
         <div class="tap-log" id="standingsTapLog" style="display:none"></div>
 
-        <!-- Deliberately low-key — this is a permanent, shared board on
-             a classroom screen, so clearing it needs real intent, not
-             a stray tap during normal play. A confirm step protects
-             against exactly that. -->
         <div id="resetRow" style="margin-top:16px;text-align:center">
           <button id="resetLink" style="background:none;border:none;color:#4a5568;font-size:.68rem;letter-spacing:.05em;text-decoration:underline;cursor:pointer;padding:8px">Reset Standings</button>
         </div>
@@ -272,9 +252,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   </div>
 </div>
 
-<!-- name entry, required before every game — this is what makes each
-     game a real, attributed entry in the standings, not an anonymous
-     score nobody can claim. -->
 <div id="screen-name-entry">
   <div class="vrr-logo">WHO'S <span>PLAYING?</span></div>
   <div class="rule-t">Enter your name to take your turn. Your best score gets tracked on the standings — every player on this device competing for the same board.</div>
@@ -282,10 +259,8 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <button class="big-btn" id="nameContinueBtn">▶ Continue</button>
 </div>
 
-<!-- COUNTDOWN -->
 <div id="countdown"><div id="bigCount">3</div></div>
 
-<!-- END -->
 <div id="screen-end">
   <a class="intro-back" href="vr-lab.html">← Exit</a>
   <div class="final-num" id="endNum">0</div>
@@ -302,6 +277,15 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════
+//  FLASH REACTION — the ORIGINAL four-direction game.
+//  This file works with exactly four directions: left, right, up,
+//  down. There is no other direction pool anywhere in this file —
+//  no diagonals, no eight-direction system. Every place a direction
+//  is generated or displayed pulls from the single DIRS array below,
+//  and nothing else.
+// ══════════════════════════════════════════════════════
+
 var FLASH_BPM=180; // settled on through real testing — the one speed that works
 function getFlashMs(){return Math.round(60000/FLASH_BPM)}
 var PACE_MS=600;
@@ -341,8 +325,6 @@ function applyIntroTranslations(){
   document.querySelector('#screen-intro .rule-t').innerHTML=t.rules;
   $('bigStart').textContent=t.start;
   $('openBoxBtn').textContent=t.standingsBtn;
-  // best-line carries a live number, so it's re-rendered from the
-  // current best value rather than just swapping static text
   if(best>0)$('bestLine').innerHTML=t.yourBest.replace('{n}',best);
 }
 $('introLangEN').addEventListener('click',function(){
@@ -364,7 +346,7 @@ var currentPlayerName='';
 function openNameEntry(){
   $('screen-intro').style.display='none';
   $('screen-name-entry').style.display='flex';
-  $('playerNameInput').value=currentPlayerName; // last name typed stays prefilled, since the same player often plays several turns in a row
+  $('playerNameInput').value=currentPlayerName;
   setTimeout(function(){$('playerNameInput').focus()},50);
 }
 $('nameContinueBtn').addEventListener('click',function(){
@@ -385,10 +367,7 @@ $('playerNameInput').addEventListener('keydown',function(e){
 
 var phase='idle';
 var idx=0,score=0,best=0,correctCount=0,totalRT=0,rtCount=0,bestAvgMs=0,misses=0;
-var shotLog=[]; // the full, ordered history of every tap this game —
-// hit or miss, with the exact BPM and points each one earned. This is
-// what makes the Box Score's tap-by-tap view possible, not just the
-// final summary numbers.
+var shotLog=[];
 var timers=[],tapLocked=false,shownAt=0,currentSide=null,awaitingResponse=false;
 var sessionBest=0, playersThisSession=0;
 var stimulus=$('stimulus'),stage=$('stage');
@@ -403,13 +382,6 @@ function loadBest(){
 function saveBest(){try{localStorage.setItem(BEST_KEY,String(best))}catch(e){}}
 function saveBestMs(){try{localStorage.setItem(BEST_MS_KEY,String(bestAvgMs))}catch(e){}}
 
-// THE STANDINGS — a shared board combining every headset in the
-// room, not just this one device. Every finished game is inserted as
-// its own row in Supabase; the app itself groups by player name and
-// keeps each player's best score when building the ranked view. A
-// dropped connection never blocks a player from seeing their own
-// result — it just means that one score won't reach the shared board
-// until the network comes back.
 var SB_URL='https://sdaphocueugzfvjovuxd.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkYXBob2N1ZXVnemZ2am92dXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjQyMDgsImV4cCI6MjA5OTIwMDIwOH0.pDAzf4P6dD9eNEBlnP95SdF5BI-R84-Rdc0vKzYcn7M';
 var SB_TABLE='velo_flash_reaction_standings';
@@ -419,13 +391,9 @@ function recordScoreToStandings(name,finalScore,made,attempts,avgMs,shots){
     method:'POST',
     headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
     body:JSON.stringify({player_name:name,score:finalScore,made:made,attempts:attempts,avg_ms:avgMs,shots:shots||[]})
-  }).catch(function(){}); // offline is fine — this game's own end screen already shows the score either way
+  }).catch(function(){});
 }
 
-// Fetches every game ever recorded, then keeps only each player's own
-// best — the same "best score per player" logic the local-only
-// version always used, just built from shared data now instead of
-// one device's own storage.
 function fetchStandings(){
   var url=SB_URL+'/rest/v1/'+SB_TABLE+'?select=player_name,score,made,attempts,avg_ms,shots&order=score.desc';
   return fetch(url,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}})
@@ -442,8 +410,6 @@ function fetchStandings(){
     });
 }
 
-// Reset flow — a low-key link reveals a real confirmation step before
-// anything is cleared. Nothing is destroyed by a single tap.
 $('resetLink').addEventListener('click',function(){
   $('resetRow').style.display='none';
   $('resetConfirm').style.display='block';
@@ -463,13 +429,8 @@ $('resetConfirmBtn').addEventListener('click',function(){
   });
 });
 
-
 function pct(made,attempts){return attempts>0?Math.round((made/attempts)*100)+'%':'--'}
 
-// Renders one game's full tap-by-tap history into a container — a
-// real, ordered record of every hit and miss with its own BPM and
-// point value, plus the game's actual final total, so someone can see
-// exactly how that number was built, not just what it added up to.
 function renderTapLog(container,shots,finalScore){
   if(!shots||!shots.length){
     container.innerHTML='<div class="tap-log-empty">No tap-by-tap detail saved for this game.</div>';
@@ -499,10 +460,6 @@ function renderStandings(lastGameName,lastGame){
   }
   renderTapLog($('lastGameTapLog'),lastShots,lastFinalScore);
 
-  // The Last Game panel above is instant, local data — no network
-  // needed. The ranked board below is shared across every headset, so
-  // it genuinely has to wait on a real fetch. Show that honestly
-  // rather than pretending it's instant too.
   var listEl=$('standingsList');
   var tapLogEl=$('standingsTapLog');
   tapLogEl.style.display='none';
@@ -540,8 +497,6 @@ function renderStandings(lastGameName,lastGame){
       });
     });
   }).catch(function(){
-    // A genuinely dropped connection — the player's own game is
-    // completely unaffected, only the shared board couldn't load.
     listEl.innerHTML='<div class="box-empty">Couldn\'t reach the standings — check the connection. <span id="standingsRetryBtn" style="color:#7c3aed;text-decoration:underline;cursor:pointer">Try again</span></div>';
     var retryBtn=document.getElementById('standingsRetryBtn');
     if(retryBtn)retryBtn.addEventListener('click',function(){renderStandings(lastGameName,lastGame)});
@@ -635,6 +590,13 @@ function randomStagePos(){
   return {x:x,y:y};
 }
 
+// ══════════════════════════════════════════════════════
+//  THE ONLY DIRECTION POOL IN THIS ENTIRE FILE.
+//  Exactly four directions. Nothing else is defined anywhere else
+//  in this script — no diagonals, no rotation-based glyph system,
+//  no second direction array. currentSide can only ever be one of
+//  these four string values, and ARROWS only has these four keys.
+// ══════════════════════════════════════════════════════
 var ARROWS={left:'◀',right:'▶',up:'▲',down:'▼'};
 var DIRS=['left','right','up','down'];
 var noResponseTimer=null;
@@ -651,28 +613,15 @@ function nextTrial(){
   awaitingResponse=true;
   shuffleButtonLayout();
 
-  // A single flash, one beat at 120 BPM, no wandering — then it's gone
-  // and the screen goes blank while the response is still fully live.
-  // Tapping is valid the whole time, both during the brief flash and
-  // through the blank screen after — this is deliberately not "you had
-  // to catch it while visible," it's "you saw it, now respond."
   timers.push(setTimeout(function(){
     stimulus.classList.remove('visible');
   },getFlashMs()));
 
-  // Same protection as the other reaction drills — no per-tap deadline,
-  // but 5 real seconds of total silence on one target ends the drill.
   stopNoResponseTimer();
   noResponseTimer=setTimeout(handleNoResponse,5000);
 }
 function stopNoResponseTimer(){if(noResponseTimer){clearTimeout(noResponseTimer);noResponseTimer=null}}
 
-// Re-randomizes which direction lives in which of the four fixed
-// screen positions, every single round. The physical slots never
-// move — the cross stays a cross, predictable to reach — but which
-// arrow is IN each slot changes every time, so there's no "top button
-// = up" muscle memory to fall back on. Reading both the target and
-// the buttons is required on every single tap.
 var SLOT_IDS=['slot0','slot1','slot2','slot3'];
 function shuffleButtonLayout(){
   var shuffled=DIRS.slice();
@@ -728,10 +677,6 @@ function handleChoice(side){
 
   if(isCorrect){
     correctCount++;
-    // Speed-sensitive scoring: 300 points at an instant tap, decaying
-    // down to exactly 1 point at 30 BPM (2000ms) — the floor now sits
-    // at a genuinely slow pace, not one that was cutting off anyone
-    // slower than 50 BPM to a flat 1 point.
     var tapPts=Math.max(1,Math.round(300-rt/6.689));
     score+=tapPts;
     shotLog.push({hit:true,bpm:bpmFromMs(rt),pts:tapPts});
@@ -751,10 +696,6 @@ function handleChoice(side){
   advanceOrEnd();
 }
 
-// Each slot's own click handler reads whichever direction is CURRENTLY
-// assigned to it at the moment of the tap, rather than a fixed
-// direction baked into the button itself — since that assignment
-// changes every round.
 ['slot0','slot1','slot2','slot3'].forEach(function(id){
   $(id).addEventListener('pointerdown',function(e){
     e.preventDefault();
@@ -764,11 +705,6 @@ function handleChoice(side){
 
 function endDrill(){
   if(phase==='done')return;
-  // If the clock runs out while a target is still actively on screen
-  // awaiting a response, that round must never just vanish from the
-  // tally — the player saw it and didn't get to respond in time,
-  // which is a real miss, exactly like any other no-response. Count
-  // it before finalizing anything else.
   if(awaitingResponse){
     awaitingResponse=false;
     idx++;
@@ -784,10 +720,6 @@ function endDrill(){
   if(isNewPts){best=finalScore;saveBest()}
   if(isNewMs){bestAvgMs=avgRT;saveBestMs()}
 
-  // The final buzzer — a real horn sound plus a screen shake, exactly
-  // the dramatic "time's up" moment a real game clock running out
-  // actually delivers. The end screen itself waits a beat behind it,
-  // so the buzzer moment gets to land before the numbers show up.
   playBuzzer();
   document.body.classList.add('buzzer-shake');
   var f=$('flash');
@@ -838,7 +770,6 @@ var lastAvgBpm=0;
 var beatAudioCtx=null;
 function getBeatAC(){if(!beatAudioCtx){try{beatAudioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return beatAudioCtx}
 
-// The final buzzer — a real, harsh sustained horn tone.
 function playBuzzer(){
   var c=getBeatAC();if(!c)return;
   try{
