@@ -203,7 +203,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   </div>
   <div class="vrr-logo">MOVING <span>TARGET</span></div>
   <div class="vrr-sub" data-i18n="subtitle">Reaction Velocity · Read The Motion</div>
-  <div class="rule-t" data-i18n="rules"><b>60 seconds.</b> The target never sits still — it drifts continuously across the screen, carrying an arrow the whole time. Position never means anything. That arrow is pulled from all eight possible directions, four of them shown on your buttons each round. Read past the motion to the true direction, and tap the match as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?</div>
+  <div class="rule-t" data-i18n="rules"><b>60 seconds.</b> The target never sits still — it drifts continuously across the screen, carrying an arrow the whole time. Position never means anything. Read the arrow, not where the target happens to be, and tap the matching direction as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?</div>
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="openNameEntry()">▶ START</button>
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
@@ -278,10 +278,9 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <script>
 // ══════════════════════════════════════════════════════
-//  MOVING TARGET — a continuously-moving target carrying an arrow drawn
-//  from the full 8-direction compass, with 4 of those 8 shown as
-//  buttons each round. Position never means anything — only the
-//  arrow riding along with the target does.
+//  MOVING TARGET — a continuously-moving target carrying an arrow.
+//  Four directions only — left, right, up, down. Position never
+//  means anything — only the arrow riding along with the target does.
 // ══════════════════════════════════════════════════════
 
 var FLASH_BPM=180; // settled on through real testing — the one speed that works
@@ -301,7 +300,7 @@ var INTRO_I18N={
   en:{
     fullscreen:'⛶ Fullscreen',
     subtitle:'Reaction Velocity · Read The Motion',
-    rules:'<b>60 seconds.</b> The target never sits still — it drifts continuously across the screen, carrying an arrow the whole time. Position never means anything. That arrow is pulled from all eight possible directions, four of them shown on your buttons each round. Read past the motion to the true direction, and tap the match as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
+    rules:'<b>60 seconds.</b> The target never sits still — it drifts continuously across the screen, carrying an arrow the whole time. Position never means anything. Read the arrow, not where the target happens to be, and tap the matching direction as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
     start:'▶ START',
     standingsBtn:'🏆 THE STANDINGS',
     yourBest:'Your best: <b>{n} pts</b>'
@@ -309,7 +308,7 @@ var INTRO_I18N={
   es:{
     fullscreen:'⛶ Pantalla Completa',
     subtitle:'Velocidad de Reacción · Lee El Movimiento',
-    rules:'<b>60 segundos.</b> El objetivo nunca se queda quieto — se desliza continuamente por la pantalla, mostrando una flecha todo el tiempo. La posición nunca importa. Esa flecha viene de las ocho direcciones posibles, cuatro de ellas en tus botones cada ronda. Lee más allá del movimiento hasta la dirección real, y toca la correcta tan rápido como puedas. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Una dirección equivocada o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
+    rules:'<b>60 segundos.</b> El objetivo nunca se queda quieto — se desliza continuamente por la pantalla, mostrando una flecha todo el tiempo. La posición nunca importa. Lee la flecha, no dónde está el objetivo, y toca la dirección correcta tan rápido como puedas. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Una dirección equivocada o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
     start:'▶ EMPEZAR',
     standingsBtn:'🏆 LA CLASIFICACIÓN',
     yourBest:'Tu mejor: <b>{n} pts</b>'
@@ -602,43 +601,28 @@ function randomStagePos(){
 // same as always, just with a genuinely wider pool to draw the round
 // from. Which four (and which one becomes the actual target) is
 // re-picked fresh every single round.
-var ROTATIONS={up:0,'up-right':45,right:90,'down-right':135,down:180,'down-left':225,left:270,'up-left':315};
-var ALL_DIRS=['up','up-right','right','down-right','down','down-left','left','up-left'];
+var ARROWS={left:'◀',right:'▶',up:'▲',down:'▼'};
+var DIRS=['left','right','up','down'];
 var noResponseTimer=null;
 var wanderTimer=null;
 
-// Picks 4 unique directions out of the full 8-direction pool for this
-// round — a diagonal landing among mostly-familiar reads is exactly
-// the kind of moment that forces a real, careful look rather than a
-// reflexive muscle-memory tap.
-function genRoundDirs(){
-  var shuffled=ALL_DIRS.slice();
-  for(var i=shuffled.length-1;i>0;i--){
-    var j=Math.floor(Math.random()*(i+1));
-    var tmp=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=tmp;
-  }
-  return shuffled.slice(0,4);
-}
-
 function nextTrial(){
   if(phase!=='running')return;
-  var roundDirs=genRoundDirs();
-  currentSide=roundDirs[Math.floor(Math.random()*4)];
-  stimulus.innerHTML='<span class="dir-glyph" style="display:inline-block;transform:rotate('+ROTATIONS[currentSide]+'deg)">▲</span>';
+  currentSide=DIRS[Math.floor(Math.random()*DIRS.length)];
+  stimulus.textContent=ARROWS[currentSide];
   var pos=randomStagePos();
   stimulus.style.left=pos.x+'px';
   stimulus.style.top=pos.y+'px';
   stimulus.classList.add('visible');
   shownAt=performance.now();
   awaitingResponse=true;
-  shuffleButtonLayout(roundDirs);
+  shuffleButtonLayout();
 
   // The target never just flashes and vanishes — it stays fully
   // visible and keeps drifting the whole time it's waiting for a
   // response. Position is never the signal; the arrow riding along
-  // with it is. Reading past the motion to the true direction — one
-  // of eight possible reads now, not just four — is the actual skill
-  // this drill trains.
+  // with it is. Reading past the motion to the true direction is the
+  // actual skill this drill trains.
   if(wanderTimer)clearInterval(wanderTimer);
   wanderTimer=setInterval(function(){
     if(!stimulus.classList.contains('visible'))return;
@@ -653,13 +637,14 @@ function nextTrial(){
 function stopWander(){if(wanderTimer){clearInterval(wanderTimer);wanderTimer=null}}
 function stopNoResponseTimer(){if(noResponseTimer){clearTimeout(noResponseTimer);noResponseTimer=null}}
 
-// Places this round's 4 chosen directions into the four fixed screen
-// positions in a fresh random order every time. The physical slots
-// never move, but which arrow is IN each slot — and which 4 of the 8
-// possible arrows even got chosen — changes every round.
+// Re-randomizes which direction lives in which of the four fixed
+// screen positions, every single round. The physical slots never
+// move — the cross stays a cross, predictable to reach — but which
+// arrow is IN each slot changes every time, so there's no "top button
+// = up" muscle memory to fall back on.
 var SLOT_IDS=['slot0','slot1','slot2','slot3'];
-function shuffleButtonLayout(roundDirs){
-  var shuffled=roundDirs.slice();
+function shuffleButtonLayout(){
+  var shuffled=DIRS.slice();
   for(var i=shuffled.length-1;i>0;i--){
     var j=Math.floor(Math.random()*(i+1));
     var tmp=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=tmp;
@@ -668,9 +653,7 @@ function shuffleButtonLayout(roundDirs){
     var dir=shuffled[i];
     var btn=$(slotId);
     btn.dataset.dir=dir;
-    var glyph=btn.querySelector('.arrow-glyph');
-    glyph.textContent='▲';
-    glyph.style.transform='rotate('+ROTATIONS[dir]+'deg)';
+    btn.querySelector('.arrow-glyph').textContent=ARROWS[dir];
   });
 }
 
