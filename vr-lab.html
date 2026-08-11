@@ -132,6 +132,26 @@ body{
   background:rgba(255,180,60,.14);
   border-color:rgba(255,180,60,.75);
 }
+
+/* Replay and Recognition are each their own distinct thing — not a
+   matched pair like Reflex/Recall — so they get their own separate
+   colors rather than sharing one. */
+.gameLink.replay-color{
+  border-color:rgba(0,206,209,.4);
+  background:rgba(0,206,209,.06);
+}
+.gameLink.replay-color:hover{
+  background:rgba(0,206,209,.14);
+  border-color:rgba(0,206,209,.75);
+}
+.gameLink.recognition-color{
+  border-color:rgba(0,217,165,.4);
+  background:rgba(0,217,165,.06);
+}
+.gameLink.recognition-color:hover{
+  background:rgba(0,217,165,.14);
+  border-color:rgba(0,217,165,.75);
+}
 .gameLink .tag{
   display:block;
   font-size:.72rem;
@@ -241,11 +261,11 @@ footer{
         Recall
         <span class="tag">Watch a sequence, then tap it back in order</span>
       </a>
-      <a class="gameLink" href="vr-replay.html">
+      <a class="gameLink replay-color" href="vr-replay.html">
         Replay
         <span class="tag">Watch a sequence play out, then replay it back</span>
       </a>
-      <a class="gameLink" href="vr-recognition.html">
+      <a class="gameLink recognition-color" href="vr-recognition.html">
         Recognition
         <span class="tag">Spot which cell changed between two patterns</span>
       </a>
