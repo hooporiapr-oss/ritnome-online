@@ -236,17 +236,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
         <div class="box-section-label">Standings — Best Score Per Player</div>
         <div class="box-table" id="standingsList" style="border-radius:12px"></div>
         <div class="tap-log" id="standingsTapLog" style="display:none"></div>
-
-        <div id="resetRow" style="margin-top:16px;text-align:center">
-          <button id="resetLink" style="background:none;border:none;color:#4a5568;font-size:.68rem;letter-spacing:.05em;text-decoration:underline;cursor:pointer;padding:8px">Reset Standings</button>
-        </div>
-        <div id="resetConfirm" style="display:none;margin-top:10px;padding:16px;border:1px solid rgba(255,30,60,.4);background:rgba(255,30,60,.06);border-radius:12px;text-align:center">
-          <div style="font-size:.82rem;color:#ff8fa3;font-weight:700;margin-bottom:12px">Clear all standings? Every player's score will be permanently removed. This can't be undone.</div>
-          <div style="display:flex;gap:10px;justify-content:center">
-            <button id="resetCancelBtn" style="padding:9px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;font-size:.75rem;font-weight:900;cursor:pointer">Cancel</button>
-            <button id="resetConfirmBtn" style="padding:9px 16px;border-radius:10px;border:none;background:#ff1e3c;color:#fff;font-size:.75rem;font-weight:900;cursor:pointer">Yes, Reset</button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -407,24 +396,9 @@ function fetchStandings(){
     });
 }
 
-$('resetLink').addEventListener('click',function(){
-  $('resetRow').style.display='none';
-  $('resetConfirm').style.display='block';
-});
-$('resetCancelBtn').addEventListener('click',function(){
-  $('resetConfirm').style.display='none';
-  $('resetRow').style.display='block';
-});
-$('resetConfirmBtn').addEventListener('click',function(){
-  fetch(SB_URL+'/rest/v1/'+SB_TABLE+'?id=gt.0',{
-    method:'DELETE',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
-  }).catch(function(){}).then(function(){
-    $('resetConfirm').style.display='none';
-    $('resetRow').style.display='block';
-    renderStandings(window.__lastGameBox?window.__lastGameBox.name:null,window.__lastGameBox?window.__lastGameBox.game:null);
-  });
-});
+// The board is now only cleared from admin.html, behind a real
+// login — never from a button any player could reach on a shared
+// classroom device.
 
 function pct(made,attempts){return attempts>0?Math.round((made/attempts)*100)+'%':'--'}
 
