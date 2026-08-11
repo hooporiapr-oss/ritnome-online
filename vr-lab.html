@@ -119,6 +119,19 @@ body{
   border-color:rgba(155,89,182,.7);
 }
 .gameLink:active{transform:scale(.98)}
+
+/* Recall and Reflex are the same underlying idea — watch a flash,
+   then respond — just with a different response mode: ordered vs.
+   unordered. Sharing a color makes that real kinship visible, not
+   just true underneath. */
+.gameLink.mem-pair{
+  border-color:rgba(255,180,60,.4);
+  background:rgba(255,180,60,.06);
+}
+.gameLink.mem-pair:hover{
+  background:rgba(255,180,60,.14);
+  border-color:rgba(255,180,60,.75);
+}
 .gameLink .tag{
   display:block;
   font-size:.72rem;
@@ -220,13 +233,13 @@ footer{
     </div>
 
     <div class="gameGrid" style="margin-top:14px">
-      <a class="gameLink" href="vr-recall.html">
-        Recall
-        <span class="tag">Watch a sequence, then tap it back in order</span>
-      </a>
-      <a class="gameLink" href="vr-reflex.html">
+      <a class="gameLink mem-pair" href="vr-reflex.html">
         Reflex
         <span class="tag">Find and tap every spot that flashed — order doesn't matter</span>
+      </a>
+      <a class="gameLink mem-pair" href="vr-recall.html">
+        Recall
+        <span class="tag">Watch a sequence, then tap it back in order</span>
       </a>
       <a class="gameLink" href="vr-replay.html">
         Replay
