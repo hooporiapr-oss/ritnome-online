@@ -83,7 +83,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 .vrr-logo span{color:#7c3aed}
 .vrr-sub{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:#7c3aed;margin-bottom:28px}
 .rule-t{font-size:.9rem;color:#cbd5e1;line-height:1.5;max-width:440px;margin-bottom:26px}
-#screen-name-entry{position:fixed;inset:0;z-index:52;display:none;flex-direction:column;align-items:center;justify-content:center;background:#000;padding:24px;text-align:center}
 .name-input{
   width:100%;max-width:400px;padding:16px;border-radius:14px;border:2px solid rgba(124,58,237,.4);
   background:rgba(255,255,255,.06);color:#fff;font-size:1.2rem;font-weight:900;
@@ -206,9 +205,8 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
     <button class="box-lang-btn" id="introLangES">ES</button>
   </div>
   <div class="vrr-logo">MOVING <span>TARGET</span></div>
-  <div class="vrr-sub" data-i18n="subtitle">Reaction Velocity · Read The Motion</div>
-  <div class="rule-t" data-i18n="rules"><b>60 seconds.</b> The target never sits still — it drifts continuously across the screen, carrying an arrow the whole time. Position never means anything. Read the arrow, not where the target happens to be, and tap the matching direction as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong direction or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?</div>
-  <button class="big-btn" id="bigStart" data-i18n="start" onclick="openNameEntry()">▶ START</button>
+  <input type="text" id="playerNameInput" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:420px;margin:16px auto 14px">
+  <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ START</button>
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
@@ -250,13 +248,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
       </div>
     </div>
   </div>
-</div>
-
-<div id="screen-name-entry">
-  <div class="vrr-logo">WHO'S <span>PLAYING?</span></div>
-  <div class="rule-t">Enter your name to take your turn. Your best score gets tracked on the standings — every player on this device competing for the same board.</div>
-  <input type="text" id="playerNameInput" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off">
-  <button class="big-btn" id="nameContinueBtn">▶ Continue</button>
 </div>
 
 <div id="countdown"><div id="bigCount">3</div></div>
@@ -318,8 +309,6 @@ var introLang='en';
 function applyIntroTranslations(){
   var t=INTRO_I18N[introLang];
   $('fsBtn').textContent=t.fullscreen;
-  document.querySelector('#screen-intro .vrr-sub').textContent=t.subtitle;
-  document.querySelector('#screen-intro .rule-t').innerHTML=t.rules;
   $('bigStart').textContent=t.start;
   $('openBoxBtn').textContent=t.standingsBtn;
   if(best>0)$('bestLine').innerHTML=t.yourBest.replace('{n}',best);
@@ -339,14 +328,9 @@ $('introLangES').addEventListener('click',function(){
 
 // Name entry — required before every turn, since standings only mean
 // something if every score is honestly attributed to a real player.
+// Now lives directly on the intro screen, matching every other game.
 var currentPlayerName='';
-function openNameEntry(){
-  $('screen-intro').style.display='none';
-  $('screen-name-entry').style.display='flex';
-  $('playerNameInput').value=currentPlayerName;
-  setTimeout(function(){$('playerNameInput').focus()},50);
-}
-$('nameContinueBtn').addEventListener('click',function(){
+function handleStartClick(){
   var name=$('playerNameInput').value.trim();
   if(!name){
     $('playerNameInput').focus();
@@ -355,11 +339,11 @@ $('nameContinueBtn').addEventListener('click',function(){
     return;
   }
   currentPlayerName=name.slice(0,20);
-  $('screen-name-entry').style.display='none';
+  $('screen-intro').style.display='none';
   startDrill();
-});
+}
 $('playerNameInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter')$('nameContinueBtn').click();
+  if(e.key==='Enter')handleStartClick();
 });
 
 var phase='idle';
@@ -769,7 +753,9 @@ function endDrill(){
 
 function nextPlayer(){
   $('screen-end').style.display='none';
-  openNameEntry();
+  $('screen-intro').style.display='flex';
+  $('playerNameInput').value=currentPlayerName;
+  setTimeout(function(){$('playerNameInput').focus()},50);
 }
 $('nextPlayerBtn').onclick=nextPlayer;
 
