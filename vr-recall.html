@@ -49,6 +49,38 @@ html,body{width:100%;height:100%;background:#000;font-family:Arial,sans-serif;co
 .intro-info{font-size:.75rem;color:#8892a0;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.8;width:100%;max-width:420px}
 .intro-info strong{color:#ffd35a}
 
+/* Name entry, standings button, and game switcher — matches the
+   established Ritnome format across all four games. */
+.name-input{width:100%;max-width:420px;padding:14px;border-radius:14px;border:2px solid rgba(255,107,53,.4);background:rgba(255,255,255,.05);color:#fff;font-family:Arial,sans-serif;font-size:1rem;text-align:center}
+.name-input:focus{outline:none;border-color:#FF6B35;box-shadow:0 0 20px rgba(255,107,53,.3)}
+.box-open-btn{width:100%;max-width:420px;height:52px;border:2px solid rgba(0,229,255,.5);background:rgba(0,229,255,.1);border-radius:14px;color:#00e5ff;font-size:.9rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:6px}
+.game-switcher{display:flex;gap:8px;max-width:420px;width:100%;margin:14px auto 0}
+.switcher-btn{flex:1;padding:10px 4px;border-radius:12px;text-decoration:none;text-align:center;font-size:.62rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;color:#fff}
+.switcher-btn.game-active{border:2px solid rgba(255,107,53,.5);background:rgba(255,107,53,.12);color:#ffb38a}
+.switcher-btn.game-current{border:2px solid rgba(255,107,53,.8);background:rgba(255,107,53,.28);color:#fff}
+#screen-box{display:none;position:fixed;inset:0;z-index:200;flex-direction:column;align-items:center;background:radial-gradient(ellipse at center,#140800 0%,#000 70%);padding:20px 16px 24px;overflow-y:auto}
+.box-back-btn{align-self:flex-start;padding:8px 16px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.5);color:#fff;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;cursor:pointer;margin-bottom:20px}
+.box-title{font-size:1.7rem;font-weight:900;font-style:italic;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 0 40px rgba(255,107,53,.8);margin-bottom:2px;text-align:center;width:100%}
+.box-title span{color:#00e5ff}
+.box-sub{font-size:.78rem;color:#a7adba;text-align:center;width:100%;margin-bottom:18px}
+.box-section-label{font-size:.68rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#ffd35a;margin-bottom:8px}
+.box-table{display:flex;flex-direction:column;gap:8px}
+.standings-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);cursor:pointer}
+.standings-row.rank-1{border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.08)}
+.standings-row.rank-2{border-color:rgba(200,200,220,.4);background:rgba(200,200,220,.06)}
+.standings-row.rank-3{border-color:rgba(255,140,66,.4);background:rgba(255,140,66,.06)}
+.standings-rank{font-weight:900;font-size:1.1rem;color:rgba(255,255,255,.4);width:24px;flex-shrink:0}
+.standings-row.rank-1 .standings-rank{color:#ffd700}
+.standings-name{flex:1;font-weight:700;font-size:.92rem;color:#fff;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.standings-bpm{font-size:.68rem;color:rgba(255,255,255,.4);flex-shrink:0}
+.standings-pts{font-weight:900;font-size:1.15rem;color:#FF6B35;flex-shrink:0;min-width:50px;text-align:right}
+.box-empty{text-align:center;color:rgba(255,255,255,.4);padding:30px 16px;font-size:.9rem}
+.tap-log{display:none;flex-wrap:wrap;gap:6px;padding:12px;background:rgba(0,0,0,.3);border-radius:12px;margin:8px 0}
+.tap-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;border-radius:10px;font-size:.7rem;font-weight:900}
+.tap-chip.hit{background:rgba(0,217,165,.12);color:#00D9A5}
+.tap-chip.miss{background:rgba(255,20,147,.12);color:#FF1493}
+.tap-log-total{width:100%;text-align:center;font-size:.85rem;color:#FF6B35;margin-top:4px;font-weight:900}
+
 @media (max-width:420px){
   #screen-intro{padding:16px 12px 20px}
   .vrr-logo{font-size:1.8rem}
@@ -122,29 +154,29 @@ html,body{width:100%;height:100%;background:#000;font-family:Arial,sans-serif;co
 
 
 <div id="screen-intro">
-  <a style="position:fixed;top:16px;left:16px;padding:8px 16px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.5);color:#fff;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;text-decoration:none;z-index:120" href="/vr-lab.html">← Games</a>
-  <button class="top-fs" id="fsBtnTop">⛶ Fullscreen</button>
+  <a style="position:fixed;top:16px;left:16px;padding:8px 16px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.5);color:#fff;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;text-decoration:none;z-index:120" href="vr-recall.html">← Back</a>
   <div class="vrr-logo">RE<span>CALL</span></div>
-  <div class="vrr-sub">5×10 Memory Board · Ritnome Memory</div>
-  <div class="vrr-rule">🧩 MEMORIZE THE PATTERN — TAP IT BACK</div>
-  <div style="font-size:.85rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:#FF6B35;margin-bottom:14px;text-align:center">⚡ RITNOME 100 · 100 BPM</div>
-  <div class="mode-row">
-    <button class="speed-btn active" data-mode="game">GAME<small>Escalating, no limit</small></button>
-    <button class="speed-btn" data-mode="training">TRAINING<small>Fixed level, 10 rounds</small></button>
+  <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:420px;margin:16px auto 14px">
+  <button class="big-btn" id="startBtn">▶ ENTER THE GAMEBOARD</button>
+  <button class="box-open-btn" id="openBoxBtn">🏆 THE STANDINGS</button>
+  <div class="game-switcher">
+    <span class="switcher-btn game-current">Recall</span>
+    <a class="switcher-btn game-active" href="vr-reflex.html">Reflex</a>
+    <a class="switcher-btn game-active" href="velo-flash-reaction.html">Flash<br>Reaction</a>
+    <a class="switcher-btn game-active" href="velo-moving-target.html">Moving<br>Target</a>
   </div>
-  <div class="level-row hidden" id="levelRow">
-    <button class="level-btn active" data-level="1">L1<small>3 cells</small></button>
-    <button class="level-btn" data-level="2">L2<small>4 cells</small></button>
-    <button class="level-btn" data-level="3">L3<small>5 cells</small></button>
-    <button class="level-btn" data-level="4">L4<small>6 cells</small></button>
-    <button class="level-btn" data-level="5">L5<small>7 cells</small></button>
-  </div>
-  <button class="big-btn" id="startBtn">▶ ENTER THE COURT</button>
-  <div class="intro-info">
-    <strong>WATCH</strong> — numbered cells light up<br>
-    <strong>BLANK</strong> — screen goes dark, beat starts<br>
-    <strong>RECALL</strong> — tap them back in order before the beat runs out<br>
-    <strong>MISS IT?</strong> — hit REPEAT before time runs out for another shot at reduced points, twice max
+  <div style="margin-top:24px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#4a5058">Powered by <a href="https://gostardigital.com" target="_blank" rel="noopener" style="color:#8892a0;font-style:italic;text-decoration:underline">Gostar Digital</a></div>
+</div>
+
+<!-- THE STANDINGS -->
+<div id="screen-box">
+  <button class="box-back-btn" id="closeBoxBtn">← Back</button>
+  <div class="box-title">THE <span>STANDINGS</span></div>
+  <div class="box-sub">Recall · Player vs. Player</div>
+  <div style="width:100%;max-width:600px">
+    <div class="box-section-label">Standings — Best Score Per Player</div>
+    <div class="box-table" id="standingsList" style="border-radius:12px"></div>
+    <div class="tap-log" id="standingsTapLog" style="display:none"></div>
   </div>
 </div>
 
@@ -184,6 +216,101 @@ var NEXT_GAME='/vr-numhunt.html?cycle=true';
 
 var bpm=100;
 var STARTING_CELLS=3;
+
+// ══════════════════════════════════════════════════════
+//  STANDINGS — its own dedicated table, entirely separate from every
+//  other game's board on the platform. Submits the existing g.sc
+//  value exactly as the game already computes it — no change to any
+//  scoring math, just recording the real result.
+// ══════════════════════════════════════════════════════
+var SUPABASE_URL='https://sdaphocueugzfvjovuxd.supabase.co';
+var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkYXBob2N1ZXVnemZ2am92dXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjQyMDgsImV4cCI6MjA5OTIwMDIwOH0.pDAzf4P6dD9eNEBlnP95SdF5BI-R84-Rdc0vKzYcn7M';
+var SB_TABLE='ritnome_recall_standings';
+var currentPlayerName='';
+var roundShotLog=[];
+
+function recordScoreToStandings(name,finalScore,made,attempts,shots){
+  return fetch(SUPABASE_URL+'/rest/v1/'+SB_TABLE,{
+    method:'POST',
+    headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({player_name:name,score:finalScore,made:made,attempts:attempts,avg_ms:0,shots:shots||[]})
+  }).catch(function(){});
+}
+function fetchStandings(){
+  var url=SUPABASE_URL+'/rest/v1/'+SB_TABLE+'?select=player_name,score,made,attempts,shots&order=score.desc';
+  return fetch(url,{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}})
+    .then(function(r){if(!r.ok)throw new Error('bad response');return r.json()})
+    .then(function(rows){
+      var best={};
+      (rows||[]).forEach(function(r){
+        var existing=best[r.player_name];
+        if(!existing||r.score>existing.pts){
+          best[r.player_name]={name:r.player_name,pts:r.score,made:r.made,attempts:r.attempts,shots:r.shots||[]};
+        }
+      });
+      return Object.keys(best).map(function(n){return best[n]}).sort(function(a,b){return b.pts-a.pts});
+    });
+}
+function renderTapLog(container,shots,finalScore){
+  if(!shots||!shots.length){
+    container.innerHTML='<div class="box-empty">No round-by-round detail saved for this game.</div>';
+    return;
+  }
+  var chips=shots.map(function(s){
+    if(s.hit)return '<div class="tap-chip hit"><span>ROUND '+s.round+'</span><span>+'+s.pts+'</span></div>';
+    return '<div class="tap-chip miss"><span>ROUND '+s.round+'</span><span>MISS</span></div>';
+  }).join('');
+  container.innerHTML=chips+'<div class="tap-log-total">Final Score: '+finalScore+' PTS</div>';
+}
+function renderStandingsList(){
+  var listEl=$('standingsList');
+  var tapLogEl=$('standingsTapLog');
+  tapLogEl.style.display='none';
+  listEl.innerHTML='<div class="box-empty">Loading standings…</div>';
+  fetchStandings().then(function(ranked){
+    var openRowName=null;
+    if(!ranked.length){
+      listEl.innerHTML='<div class="box-empty">No players yet — be the first name on the board.</div>';
+      return;
+    }
+    listEl.innerHTML=ranked.map(function(p,i){
+      var rankClass=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+      var safeName=p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      return '<div class="standings-row '+rankClass+'" data-name="'+safeName+'">'
+        +'<span class="standings-rank">'+(i+1)+'</span>'
+        +'<span class="standings-name">'+safeName+'</span>'
+        +'<span class="standings-bpm">'+(p.made>0?p.made+' rounds':'')+'</span>'
+        +'<span class="standings-pts">'+p.pts+'</span>'
+        +'</div>';
+    }).join('');
+    listEl.querySelectorAll('.standings-row').forEach(function(row){
+      row.addEventListener('click',function(){
+        var name=row.dataset.name;
+        if(openRowName===name){tapLogEl.style.display='none';openRowName=null;return}
+        openRowName=name;
+        var p=ranked.find(function(r){return r.name===name});
+        renderTapLog(tapLogEl,p.shots,p.pts);
+        tapLogEl.style.display='flex';
+        row.insertAdjacentElement('afterend',tapLogEl);
+      });
+    });
+  }).catch(function(){
+    listEl.innerHTML='<div class="box-empty">Couldn\'t reach the standings — check the connection.</div>';
+  });
+}
+$('openBoxBtn').addEventListener('click',function(){
+  $('screen-intro').style.display='none';
+  $('screen-box').style.display='flex';
+  renderStandingsList();
+});
+$('closeBoxBtn').addEventListener('click',function(){
+  $('screen-box').style.display='none';
+  $('screen-intro').style.display='flex';
+});
+$('playerNameInputMain').addEventListener('keydown',function(e){
+  if(e.key==='Enter')$('startBtn').click();
+});
+// ══════════════════════════════════════════════════════
 
 var gameMode='game'; // 'game' | 'training'
 var trainingLevel=1; // 1-5
@@ -254,14 +381,25 @@ if(cycleMode){
   setTimeout(startRound,1000);
 }else{
   $('startBtn').onclick=function(){
+    var nameField=$('playerNameInputMain');
+    var nm=nameField.value.trim();
+    if(!nm){
+      nameField.focus();
+      nameField.style.borderColor='#FF1493';
+      setTimeout(function(){nameField.style.borderColor=''},600);
+      return;
+    }
+    currentPlayerName=nm.slice(0,20);
+    roundShotLog=[];
     $('screen-intro').style.display='none';$('screen-game').style.display='flex';
     g.cellCount=getInitialCellCount();g.roundsDone=0;
     buildCourt();updateHUD();
+    startRound();
   };
 }
 
 $('menuBtn').onclick=function(){stopFullStrobe();stopRecallTimer();$('screen-game').style.display='none';$('screen-intro').style.display='flex'};
-$('fsBtnTop').onclick=async function(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
+var fsbTop=$('fsBtnTop');if(fsbTop)fsbTop.onclick=async function(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
 $('fsBtnCourt').onclick=async function(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}};
 
 var cells=[];
@@ -412,6 +550,7 @@ function handleTap(idx){
       g.streak++;
       var pts=attemptNum===0?g.cellCount*10:(attemptNum===1?g.cellCount*5:g.cellCount*1);
       g.sc+=pts;
+      roundShotLog.push({hit:true,round:g.cellCount,pts:pts});
       var ptsLabel=attemptNum===0?'':(' ('+pts+' PT'+(pts===1?'':'S')+') · ');
 
       if(gameMode==='training'){
@@ -446,6 +585,7 @@ function endGame(wrongIdx){
   phase='idle';clrT();stopFullStrobe();stopRecallTimer();
   $('repeatBtn').classList.remove('show');
   if(wrongIdx!==null)cellSt(wrongIdx,'wrong');
+  roundShotLog.push({hit:false,round:g.cellCount,pts:0});
   g.streak=0;updateHUD();
   msg(wrongIdx!==null?'WRONG ORDER!':'⏱ TIME UP!','miss');
 
@@ -478,6 +618,8 @@ function showFinalScore(){
   $('actBtn').textContent="PLAY AGAIN";$('actBtn').onclick=restartGame;$('actBtn').disabled=false;
   $('restartBtn').style.display='none';
   $('nextGameBtn').style.display='flex';
+  var made=roundShotLog.filter(function(s){return s.hit}).length;
+  recordScoreToStandings(currentPlayerName,g.sc,made,roundShotLog.length,roundShotLog);
 }
 
 function showTrainingComplete(){
@@ -487,12 +629,14 @@ function showTrainingComplete(){
   $('actBtn').textContent="PLAY AGAIN";$('actBtn').onclick=restartGame;$('actBtn').disabled=false;
   $('restartBtn').style.display='none';
   $('nextGameBtn').style.display='flex';
+  var made=roundShotLog.filter(function(s){return s.hit}).length;
+  recordScoreToStandings(currentPlayerName,g.sc,made,roundShotLog.length,roundShotLog);
 }
 
 function restartGame(){
   clrT();phase='idle';stopFullStrobe();stopRecallTimer();
   g={sc:0,cellCount:getInitialCellCount(),best:0,streak:0,roundsDone:0};
-  attemptNum=0;repeatOfferNum=0;
+  attemptNum=0;repeatOfferNum=0;roundShotLog=[];
   resetCells();updateHUD();$('clockFill').style.width='0%';$('hPf').textContent='--';
   $('repeatBtn').classList.remove('show');
   msg("TAP LET'S GO!",'watch');
